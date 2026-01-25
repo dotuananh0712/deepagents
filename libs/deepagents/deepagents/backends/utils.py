@@ -7,9 +7,10 @@ enable composition without fragile string parsing.
 
 import os
 import re
+from collections.abc import Sequence
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Literal, Sequence
+from typing import Any, Literal
 
 import wcmatch.glob as wcglob
 
@@ -352,7 +353,7 @@ def _glob_search_files(
         ```
     """
     try:
-        normalized_path = _normalize_dir_path(path)
+        normalized_path = _validate_path(path)
     except ValueError:
         return "No files found"
 
@@ -443,7 +444,7 @@ def _grep_search_files(
         return f"Invalid regex pattern: {e}"
 
     try:
-        normalized_path = _normalize_dir_path(path)
+        normalized_path = _validate_path(path or "/")
     except ValueError:
         return "No matches found"
 
@@ -483,12 +484,7 @@ def grep_matches_from_files(
     contexts and preserve user-facing error messages.
     """
     try:
-        regex = re.compile(pattern)
-    except re.error as e:
-        return f"Invalid regex pattern: {e}"
-
-    try:
-        normalized_path = _normalize_dir_path(path)
+        normalized_path = _validate_path(path or "/")
     except ValueError:
         return []
 

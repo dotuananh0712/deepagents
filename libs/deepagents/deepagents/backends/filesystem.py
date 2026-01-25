@@ -461,7 +461,7 @@ class FilesystemBackend(BackendProtocol):
             p = Path(ftext)
             if self.virtual_mode:
                 try:
-                    virt = "/" + str(p.resolve().relative_to(self.cwd))
+                    virt = "/" + p.resolve().relative_to(self.cwd).as_posix()
                 except Exception:
                     continue
             else:
